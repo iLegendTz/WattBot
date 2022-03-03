@@ -11,6 +11,6 @@
     "name": "mage",
     "advanced_classes": ["bard", "sorceress"]
 }, {
-    "name": "assasin",
+    "name": "assassin",
     "advanced_classes": ["shadowhunter", "deathblade"]
 }]
