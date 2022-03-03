@@ -32,10 +32,10 @@ class Skill:
         soup = BeautifulSoup(driver.page_source, 'lxml')
         driver.close()
 
-        skills_html = soup.find_all('div', {'class', 'lap-SkillSlot'})
+        skills_html = soup.find_all('div', {'class', 'lap-SkillSlot'})[:8]
 
         lst_skills = []
-        for skill_html in skills_html[:-1]:
+        for skill_html in skills_html:
             skill = Skill()
             name = skill_html.find('div', {'class', 'lap-skill-name'}).text
             level = skill_html.find('div', {'class', 'lap-skill-level'}).text
