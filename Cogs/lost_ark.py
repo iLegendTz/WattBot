@@ -29,6 +29,9 @@ class LostArk(commands.Cog):
         for idx, class_ in enumerate(classes):
             message += "{0}: {1}\n".format(idx+1, class_["name"].capitalize())
 
+            if((idx+1) == len(classes)):
+                message += "0: Cancelar"
+
         reply = await ctx.reply(message)
 
         def classExists(i, classes):
@@ -58,6 +61,9 @@ class LostArk(commands.Cog):
         for idx, advanced_class in enumerate(classes[class_idx-1]["advanced_classes"]):
             message += "{0}: {1}\n".format(idx+1, advanced_class.capitalize())
 
+            if((idx+1) == len(classes)):
+                message += "0: Cancelar"
+
         await reply.edit(content=message)
 
         def advancedClassCheck(m):
@@ -76,6 +82,10 @@ class LostArk(commands.Cog):
 
         advanced_class_idx = int(advanced_class_idx.content)
 
+        if class_idx == 0:
+            await reply.edit(content="Cancelado")
+            return
+
         class_name = classes[class_idx-1]['name']
         advanced_class_name = classes[class_idx -
                                       1]['advanced_classes'][advanced_class_idx-1]
@@ -87,6 +97,8 @@ class LostArk(commands.Cog):
         for idx, build in enumerate(builds):
             message += "{0}: {1} <{2}>\n".format(idx+1,
                                                  build.get_name(), build.get_url())
+            if((idx+1) == len(classes)):
+                message += "0: Cancelar"
 
         await reply.edit(content=message)
 
@@ -104,6 +116,10 @@ class LostArk(commands.Cog):
 
         build_idx = int(build_idx.content)
 
+        if class_idx == 0:
+            await reply.edit(content="Cancelado")
+            return
+
         build = builds[build_idx-1]
 
         description = ""
@@ -113,6 +129,8 @@ class LostArk(commands.Cog):
         for skill in build.get_skills():
             description += "{0}: {1}\n".format(skill.get_name(),
                                                skill.get_level())
+            if((idx+1) == len(classes)):
+                message += "0: Cancelar"
 
         description += "Original: {0}".format(build.get_url())
 
