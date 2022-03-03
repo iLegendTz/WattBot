@@ -1,0 +1,16 @@
+[{
+    "name": "warrior",
+    "advanced_classes": ["berserker", "paladin", "gunlancer"]
+}, {
+    "name": "martial artist",
+    "advanced_classes": ["striker", "wardancer", "scrapper", "soulfist"]
+}, {
+    "name": "gunner",
+    "advanced_classes": ["gunslinger", "artillerist", "deadeye", "sharpshooter"]
+}, {
+    "name": "mage",
+    "advanced_classes": ["bard", "sorceress"]
+}, {
+    "name": "assasin",
+    "advanced_classes": ["shadowhunter", "deathblade"]
+}]
