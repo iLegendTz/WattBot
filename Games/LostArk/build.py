@@ -1,38 +1,42 @@
+from typing import List
 from time import sleep
+import os
+
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
-import os
+
+from Games.LostArk.skill import Skill
 
 
 class Build():
 
-    def __init__(self, character_class, character_advanced_class):
+    def __init__(self, character_class: str, character_advanced_class: str):
         self.character_class = character_class
         self.character_advanced_class = character_advanced_class
 
-    def set_name(self, name):
+    def set_name(self, name: str):
         self.name = name
 
-    def get_name(self):
+    def get_name(self) -> str:
         return self.name
 
-    def set_url(self, url):
+    def set_url(self, url: str):
         self.url = url
 
-    def get_url(self):
+    def get_url(self) -> str:
         return self.url
 
-    def set_skills(self, skills):
+    def set_skills(self, skills: List[Skill]):
         self.skills = skills
 
-    def get_skills(self):
+    def get_skills(self) -> List[Skill]:
         return self.skills
 
-    def set_image_url(self, image_url):
+    def set_image_url(self, image_url: str):
         self.image_url = image_url
 
-    def get_image_url(self):
+    def get_image_url(self) -> str:
         return self.image_url
 
     def search_builds(self):
@@ -53,6 +57,7 @@ class Build():
                                 ).findChildren('a', recursive=False)
 
         lst_builds = []
+        build_html: BeautifulSoup
         for build_html in builds_html:
             build = Build(self.character_class, self.character_advanced_class)
             name = build_html.find('h2').text

@@ -1,21 +1,22 @@
 from time import sleep
+import os
+
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
-import os
 
 
 class Skill:
-    def set_name(self, name):
+    def set_name(self, name: str):
         self.name = name
 
-    def get_name(self):
+    def get_name(self) -> str:
         return self.name
 
-    def set_level(self, level):
+    def set_level(self, level: int):
         self.level = level
 
-    def get_level(self):
+    def get_level(self) -> int:
         return self.level
 
     def search_skills(self, url):
@@ -35,10 +36,12 @@ class Skill:
         skills_html = soup.find_all('div', {'class', 'lap-SkillSlot'})[:8]
 
         lst_skills = []
+        skill_html: BeautifulSoup
         for skill_html in skills_html:
             skill = Skill()
             name = skill_html.find('div', {'class', 'lap-skill-name'}).text
-            level = skill_html.find('div', {'class', 'lap-skill-level'}).text
+            level = int(skill_html.find(
+                'div', {'class', 'lap-skill-level'}).text)
 
             skill.set_name(name)
             skill.set_level(level)

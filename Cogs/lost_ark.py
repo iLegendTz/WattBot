@@ -1,8 +1,12 @@
 import asyncio
 import os
 import json
+
 from discord.ext import commands
 from discord import Embed
+from discord.ext.commands import Context
+from discord import Message
+
 from Games.LostArk.build import Build
 from Games.LostArk.skill import Skill
 from main import bot
@@ -22,30 +26,32 @@ class LostArk(commands.Cog):
         pass
 
     @lost_ark.command(name="build")
-    async def build(self, ctx):
+    async def build(self, ctx: Context):
+        # --- Class options ---
         classes = json.load(open(f'{os.getcwd()}/Games/LostArk/classes.json'))
         message = "Elige la clase:\n"
 
         for idx, class_ in enumerate(classes):
-            message += "{0}: {1}\n".format(idx+1, class_["name"].capitalize())
+            message += "{0}: {1}\n".format(idx+1,
+                                           str(class_["name"]).capitalize())
 
             if((idx+1) == len(classes)):
                 message += "0: Cancelar"
 
-        reply = await ctx.reply(message)
+        reply: Message = await ctx.reply(message)
 
-        def classExists(i, classes):
+        def classExists(i: int, classes) -> bool:
             return i >= 0 and i <= len(classes)
 
-        def checkClass(m):
-            if m.content.isdigit() != True:
+        def checkClass(m: Message) -> bool:
+            if str(m.content).isdigit() != True:
                 return False
             if classExists(i=int(m.content), classes=classes) != True:
                 return False
             return m.author.id == ctx.author.id and m.channel.id == ctx.channel.id
 
         try:
-            class_idx = await bot.wait_for("message", check=checkClass, timeout=10)
+            class_idx: Message = await bot.wait_for("message", check=checkClass, timeout=10)
         except asyncio.TimeoutError:
             await reply.edit(content="Operacion cancelada, timeout")
             return
@@ -56,25 +62,27 @@ class LostArk(commands.Cog):
             await reply.edit(content="Cancelado")
             return
 
+        # --- Advanced class options ---
         message = "Elige una clase avanzada:\n"
 
         for idx, advanced_class in enumerate(classes[class_idx-1]["advanced_classes"]):
-            message += "{0}: {1}\n".format(idx+1, advanced_class.capitalize())
+            message += "{0}: {1}\n".format(idx+1,
+                                           str(advanced_class).capitalize())
 
             if((idx+1) == len(classes)):
                 message += "0: Cancelar"
 
         await reply.edit(content=message)
 
-        def advancedClassCheck(m):
-            if m.content.isdigit() != True:
+        def advancedClassCheck(m: Message) -> bool:
+            if str(m.content).isdigit() != True:
                 return False
             if classExists(i=int(m.content), classes=classes[class_idx-1]["advanced_classes"]) != True:
                 return False
             return m.author.id == ctx.author.id and m.channel.id == ctx.channel.id
 
         try:
-            advanced_class_idx = await bot.wait_for("message", check=advancedClassCheck, timeout=10)
+            advanced_class_idx: Message = await bot.wait_for("message", check=advancedClassCheck, timeout=10)
             await reply.edit(content="Awantame tantillo...")
         except asyncio.TimeoutError:
             await reply.edit(content="Operacion cancelada, timeout")
@@ -92,6 +100,7 @@ class LostArk(commands.Cog):
 
         builds = Build(class_name, advanced_class_name).search_builds()
 
+        # --- Builds options ---
         message = "Elige una build:\n"
 
         for idx, build in enumerate(builds):
@@ -102,13 +111,13 @@ class LostArk(commands.Cog):
 
         await reply.edit(content=message)
 
-        def buildClassCheck(m):
-            if m.content.isdigit() != True:
+        def buildClassCheck(m: Message) -> bool:
+            if str(m.content).isdigit() != True:
                 return False
             return m.author.id == ctx.author.id and m.channel.id == ctx.channel.id and int(m.content) > 0 and int(m.content) <= len(builds)
 
         try:
-            build_idx = await bot.wait_for("message", check=buildClassCheck, timeout=10)
+            build_idx: Message = await bot.wait_for("message", check=buildClassCheck, timeout=10)
             await reply.edit(content="Awantame tantillo...")
         except asyncio.TimeoutError:
             await reply.edit(content="Operacion cancelada, timeout")
@@ -120,8 +129,9 @@ class LostArk(commands.Cog):
             await reply.edit(content="Cancelado")
             return
 
-        build = builds[build_idx-1]
+        build: Build = builds[build_idx-1]
 
+        # --- Embed message ---
         description = ""
 
         build.set_skills(Skill().search_skills(build.get_url()))
@@ -139,6 +149,7 @@ class LostArk(commands.Cog):
 
         embed.set_image(url=build.get_image_url())
 
+        await reply.delete()
         await ctx.reply(embed=embed)
 
 
