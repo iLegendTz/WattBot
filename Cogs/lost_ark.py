@@ -6,15 +6,15 @@ from discord.ext import commands
 from discord import Embed
 from discord.ext.commands import Context
 from discord import Message
+from discord import Client
 
 from Games.LostArk.build import Build
 from Games.LostArk.skill import Skill
-from main import bot
 
 
 class LostArk(commands.Cog):
 
-    def __init__(self, client):
+    def __init__(self, client: Client):
         self.client = client
 
     @commands.Cog.listener()
@@ -51,7 +51,7 @@ class LostArk(commands.Cog):
             return m.author.id == ctx.author.id and m.channel.id == ctx.channel.id
 
         try:
-            class_idx: Message = await bot.wait_for("message", check=checkClass, timeout=10)
+            class_idx: Message = await self.client.wait_for("message", check=checkClass, timeout=10)
         except asyncio.TimeoutError:
             await reply.edit(content="Operacion cancelada, timeout")
             return
@@ -69,7 +69,7 @@ class LostArk(commands.Cog):
             message += "{0}: {1}\n".format(idx+1,
                                            str(advanced_class).capitalize())
 
-            if((idx+1) == len(classes)):
+            if((idx+1) == len(classes[class_idx-1]["advanced_classes"])):
                 message += "0: Cancelar"
 
         await reply.edit(content=message)
@@ -82,7 +82,7 @@ class LostArk(commands.Cog):
             return m.author.id == ctx.author.id and m.channel.id == ctx.channel.id
 
         try:
-            advanced_class_idx: Message = await bot.wait_for("message", check=advancedClassCheck, timeout=10)
+            advanced_class_idx: Message = await self.client.wait_for("message", check=advancedClassCheck, timeout=10)
             await reply.edit(content="Awantame tantillo...")
         except asyncio.TimeoutError:
             await reply.edit(content="Operacion cancelada, timeout")
@@ -90,7 +90,7 @@ class LostArk(commands.Cog):
 
         advanced_class_idx = int(advanced_class_idx.content)
 
-        if class_idx == 0:
+        if advanced_class_idx == 0:
             await reply.edit(content="Cancelado")
             return
 
@@ -106,7 +106,7 @@ class LostArk(commands.Cog):
         for idx, build in enumerate(builds):
             message += "{0}: {1} <{2}>\n".format(idx+1,
                                                  build.get_name(), build.get_url())
-            if((idx+1) == len(classes)):
+            if((idx+1) == len(builds)):
                 message += "0: Cancelar"
 
         await reply.edit(content=message)
@@ -114,10 +114,10 @@ class LostArk(commands.Cog):
         def buildClassCheck(m: Message) -> bool:
             if str(m.content).isdigit() != True:
                 return False
-            return m.author.id == ctx.author.id and m.channel.id == ctx.channel.id and int(m.content) > 0 and int(m.content) <= len(builds)
+            return m.author.id == ctx.author.id and m.channel.id == ctx.channel.id and ((int(m.content) > 0 and int(m.content) <= len(builds)) or int(m.content) == 0)
 
         try:
-            build_idx: Message = await bot.wait_for("message", check=buildClassCheck, timeout=10)
+            build_idx: Message = await self.client.wait_for("message", check=buildClassCheck, timeout=10)
             await reply.edit(content="Awantame tantillo...")
         except asyncio.TimeoutError:
             await reply.edit(content="Operacion cancelada, timeout")
@@ -125,7 +125,7 @@ class LostArk(commands.Cog):
 
         build_idx = int(build_idx.content)
 
-        if class_idx == 0:
+        if build_idx == 0:
             await reply.edit(content="Cancelado")
             return
 
