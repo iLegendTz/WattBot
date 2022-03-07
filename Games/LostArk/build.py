@@ -47,6 +47,11 @@ class Build():
         options.add_experimental_option('excludeSwitches', ['enable-logging'])
 
         driver = webdriver.Chrome(service=service, options=options)
+
+        # Posible error de tipado en la pagina https://lost-ark.maxroll.gg/build-guides#classes=[martist-artist]&classes=[scrapper]
+        if(self.character_class == "martial artist"):
+            self.character_class = "martist-artist"
+
         url = f"https://lost-ark.maxroll.gg/build-guides#classes=[{self.character_class}]&classes=[{self.character_advanced_class}]"
         driver.get(url)
         sleep(3)
