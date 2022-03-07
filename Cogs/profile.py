@@ -1,13 +1,12 @@
 from discord.ext import commands
 from discord import Embed
 from discord.ext.commands import Context
-
-from main import bot
+from discord import Client
 
 
 class Profile(commands.Cog):
 
-    def __init__(self, client):
+    def __init__(self, client: Client):
         self.client = client
 
     @commands.Cog.listener()
@@ -17,9 +16,9 @@ class Profile(commands.Cog):
     @commands.command(name="avatar")
     async def build(self, ctx: Context, user_id: str = None):
         if not user_id:
-            user = await bot.fetch_user(user_id=ctx.author.id)
+            user = await self.client.fetch_user(user_id=ctx.author.id)
         else:
-            user = await bot.fetch_user(removeExtraCharactersFromUserId(user_id=user_id))
+            user = await self.client.fetch_user(removeExtraCharactersFromUserId(user_id=user_id))
 
         embed = Embed(title="{0}#{1}".format(user.name, user.discriminator))
         embed.set_image(url=user.avatar_url)
